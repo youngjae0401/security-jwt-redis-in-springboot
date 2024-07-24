@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: java_app
+  datasource:
+    url: jdbc:mysql://localhost:3306/study
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: root
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: mysql
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 1000
+          time_zone: Asia/Seoul
+        order_inserts: true
+        order_updates: true
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        show_sql: true
+server:
+  port: 8080
+jwt:
+  type: Bearer
+  secret-key: a2c3935cb452b1221d13a4eac0d7588c1011cdc5efc36fe82fc5bb944053638d1403632cbb7527afa0e47efdda47555879ef31185eaac46160e3a979a9194919
+  access-expiration-milliseconds: 10800000 # 10800000
+  refresh-expiration-milliseconds: 604800000 # 604800000
