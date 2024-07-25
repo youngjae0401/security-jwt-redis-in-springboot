@@ -17,15 +17,15 @@ public class ResponseDto<T> {
         return new ResponseDto<>(ResponseStatus.OK.getCode(), ResponseStatus.OK.getMessage(), null);
     }
 
-    public static <T> ResponseDto<T> success(T data) {
+    public static <T> ResponseDto<T> success(final T data) {
         return new ResponseDto<>(ResponseStatus.OK.getCode(), ResponseStatus.OK.getMessage(), data);
     }
 
-    public static <T> ResponseDto<T> success(HttpStatus httpStatus, T data) {
+    public static <T> ResponseDto<T> success(final HttpStatus httpStatus, final T data) {
         return new ResponseDto<>(httpStatus.value(), httpStatus.getReasonPhrase(), data);
     }
 
-    public static <T> ResponseDto<T> success(HttpStatus httpStatus, String message, T data) {
+    public static <T> ResponseDto<T> success(final HttpStatus httpStatus, final String message, final T data) {
         return new ResponseDto<>(httpStatus.value(), message, data);
     }
 
@@ -33,27 +33,27 @@ public class ResponseDto<T> {
         return new ResponseDto<>(ResponseStatus.BAD_REQUEST.getCode(), ResponseStatus.BAD_REQUEST.getMessage(), null);
     }
 
-    public static <T> ResponseDto<T> fail(T data) {
+    public static <T> ResponseDto<T> fail(final T data) {
         return new ResponseDto<>(ResponseStatus.BAD_REQUEST.getCode(), ResponseStatus.BAD_REQUEST.getMessage(), data);
     }
 
-    public static <T> ResponseDto<T> fail(String message) {
+    public static <T> ResponseDto<T> fail(final String message) {
         return new ResponseDto<>(ResponseStatus.BAD_REQUEST.getCode(), message, null);
     }
 
-    public static <T> ResponseDto<T> fail(HttpStatus httpStatus) {
+    public static <T> ResponseDto<T> fail(final HttpStatus httpStatus) {
         return new ResponseDto<>(httpStatus.value(), httpStatus.getReasonPhrase(), null);
     }
 
-    public static <T> ResponseDto<T> fail(HttpStatus httpStatus, String message) {
+    public static <T> ResponseDto<T> fail(final HttpStatus httpStatus, final String message) {
         return new ResponseDto<>(httpStatus.value(), message, null);
     }
 
-    public static <T> ResponseDto<T> fail(HttpStatus httpStatus, T data) {
+    public static <T> ResponseDto<T> fail(final HttpStatus httpStatus, final T data) {
         return new ResponseDto<>(httpStatus.value(), httpStatus.getReasonPhrase(), data);
     }
 
-    public static <T> ResponseDto<T> fail(HttpStatus httpStatus, String message, T data) {
+    public static <T> ResponseDto<T> fail(final HttpStatus httpStatus, final String message, final T data) {
         return new ResponseDto<>(httpStatus.value(), message, data);
     }
 

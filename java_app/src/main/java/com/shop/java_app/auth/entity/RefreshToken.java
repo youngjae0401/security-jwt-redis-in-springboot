@@ -20,7 +20,7 @@ public class RefreshToken {
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long refreshExpirationTime;
 
-    public RefreshToken(Long id, String refreshToken, long refreshExpirationTime) {
+    public RefreshToken(final Long id, final String refreshToken, final long refreshExpirationTime) {
         this.id = id;
         this.refreshToken = refreshToken;
         this.refreshExpirationTime = refreshExpirationTime;

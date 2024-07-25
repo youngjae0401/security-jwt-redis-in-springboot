@@ -29,9 +29,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService userDetailsService;
     private final BlackListRepository blackListRepository;
 
-    public JwtAuthorizationFilter(JwtTokenProvider jwtTokenProvider,
-                                  CustomUserDetailsService userDetailsService,
-                                  BlackListRepository blackListRepository) {
+    public JwtAuthorizationFilter(final JwtTokenProvider jwtTokenProvider,
+                                  final CustomUserDetailsService userDetailsService,
+                                  final BlackListRepository blackListRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
         this.blackListRepository = blackListRepository;
@@ -43,15 +43,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             // 토큰이 있는지, 유효한 토큰인지, 액세스 토큰인지, 블랙리스트에 담겨 있는 토큰인지
-            String accessToken = jwtTokenProvider.resolveToken(request);
+            final String accessToken = jwtTokenProvider.resolveToken(request);
             if (accessToken != null
                     && jwtTokenProvider.isValidateToken(accessToken)
                     && jwtTokenProvider.extractTokenType(accessToken) == TokenType.ACCESS
                     && !blackListRepository.existsByAccessToken(accessToken)) {
-                String email = jwtTokenProvider.extractEmail(accessToken);
-                CustomUserDetails userDetails = (CustomUserDetails) this.userDetailsService.loadUserByUsername(email);
+                final String email = jwtTokenProvider.extractEmail(accessToken);
+                final CustomUserDetails userDetails = (CustomUserDetails) this.userDetailsService.loadUserByUsername(email);
 
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

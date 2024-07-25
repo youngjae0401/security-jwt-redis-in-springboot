@@ -4,5 +4,5 @@ import com.shop.java_app.auth.entity.BlackList;
 import org.springframework.data.repository.CrudRepository;
 
 public interface BlackListRepository extends CrudRepository<BlackList, Long> {
-    boolean existsByAccessToken(String accessToken);
+    boolean existsByAccessToken(final String accessToken);
 }

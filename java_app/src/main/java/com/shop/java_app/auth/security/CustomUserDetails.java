@@ -10,7 +10,7 @@ import java.util.Collection;
 public class CustomUserDetails implements UserDetails {
     private final AuthUserResponse user;
 
-    public CustomUserDetails(AuthUserResponse authUserResponse) {
+    public CustomUserDetails(final AuthUserResponse authUserResponse) {
         user = authUserResponse;
     }
 

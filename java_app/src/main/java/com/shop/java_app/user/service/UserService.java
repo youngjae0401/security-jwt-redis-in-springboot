@@ -1,5 +1,6 @@
 package com.shop.java_app.user.service;
 
+import com.shop.java_app.common.exception.DuplicationException;
 import com.shop.java_app.common.exception.ErrorCode;
 import com.shop.java_app.common.exception.NotFoundException;
 import com.shop.java_app.user.dto.UserRequest;
@@ -25,17 +26,25 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(Long userId, UserRequest request) {
-        User user = userRepository.findById(userId)
+    public UserResponse updateUser(final Long userId, final UserRequest request) {
+        validatePhoneNumberDuplicate(request.getPhoneNumber());
+
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
         user.updateUser(request);
         return user.toResponse();
     }
 
     @Transactional
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
+    public void deleteUser(final Long userId) {
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
         userRepository.delete(user);
+    }
+
+    private void validatePhoneNumberDuplicate(final String phoneNumber) {
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new DuplicationException(ErrorCode.DUPLICATE_PHONE_NUMBER);
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.shop.java_app.auth.repository.BlackListRepository;
 import com.shop.java_app.auth.repository.RefreshTokenRepository;
 import com.shop.java_app.auth.security.CustomUserDetails;
 import com.shop.java_app.auth.security.CustomUserDetailsService;
+import com.shop.java_app.common.exception.DuplicationException;
 import com.shop.java_app.common.exception.ErrorCode;
 import com.shop.java_app.common.exception.NotFoundException;
 import com.shop.java_app.user.entity.User;
@@ -49,17 +50,19 @@ public class AuthService {
     private long refreshExpirationTime;
 
     @Transactional
-    public void signup(SignUpRequest request) {
+    public void signup(final SignUpRequest request) {
+        validateEmailDuplicate(request.getEmail());
+        validatePhoneNumberDuplicate(request.getPhoneNumber());
         userRepository.save(request.toEntity(passwordEncoder.encode(request.getPassword())));
     }
 
     @Transactional
-    public TokenResponse signin(SignInRequest request) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+    public TokenResponse signin(final SignInRequest request) {
+        final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+        final Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        final CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        final String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+        final String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
         deleteAndCreateRefreshToken(userDetails, refreshToken);
 
         return TokenResponse.builder()
@@ -70,18 +73,18 @@ public class AuthService {
     }
 
     @Transactional
-    public void signout(HttpServletRequest request) {
-        String accessToken = jwtTokenProvider.resolveToken(request);
+    public void signout(final HttpServletRequest request) {
+        final String accessToken = jwtTokenProvider.resolveToken(request);
         validateToken(accessToken, TokenType.ACCESS);
 
-        Long userId = jwtTokenProvider.extractUserId(accessToken);
-        User user = userRepository.findById(userId)
+        final Long userId = jwtTokenProvider.extractUserId(accessToken);
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        Date expirationTime = jwtTokenProvider.extractExpiration(accessToken);
+        final Date expirationTime = jwtTokenProvider.extractExpiration(accessToken);
 
         // 만료시간 - 현재시간 = 만료시간까지 남은 시간
-        long accessExpirationTime = expirationTime.getTime() - new Date().getTime();
+        final long accessExpirationTime = expirationTime.getTime() - new Date().getTime();
 
         // Black List 데이터 저장
         blackListRepository.save(new BlackList(user.getId(), accessToken, accessExpirationTime));
@@ -91,12 +94,12 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse reissue(HttpServletRequest request) {
-        String refreshToken = jwtTokenProvider.resolveToken(request);
+    public TokenResponse reissue(final HttpServletRequest request) {
+        final String refreshToken = jwtTokenProvider.resolveToken(request);
         validateToken(refreshToken, TokenType.REFRESH);
 
-        Long userId = jwtTokenProvider.extractUserId(refreshToken);
-        RefreshToken refreshTokenInfo = refreshTokenRepository.findByRefreshToken(refreshToken)
+        final Long userId = jwtTokenProvider.extractUserId(refreshToken);
+        final RefreshToken refreshTokenInfo = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         // user id 검증
@@ -104,12 +107,12 @@ public class AuthService {
             throw new JwtException(ErrorCode.INVALID_TOKEN.getMessage());
         }
 
-        User user = userRepository.findById(refreshTokenInfo.getId())
+        final User user = userRepository.findById(refreshTokenInfo.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(user.getEmail());
-        String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+        final CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(user.getEmail());
+        final String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
+        final String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
         deleteAndCreateRefreshToken(userDetails, newRefreshToken);
 
         return TokenResponse.builder()
@@ -119,7 +122,19 @@ public class AuthService {
                 .build();
     }
 
-    private void validateToken(String token, TokenType tokenType) {
+    private void validateEmailDuplicate(final String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicationException(ErrorCode.DUPLICATE_EMAIL);
+        }
+    }
+
+    private void validatePhoneNumberDuplicate(final String phoneNumber) {
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new DuplicationException(ErrorCode.DUPLICATE_PHONE_NUMBER);
+        }
+    }
+
+    private void validateToken(final String token, final TokenType tokenType) {
         if (token == null
                 || !jwtTokenProvider.isValidateToken(token)
                 || jwtTokenProvider.extractTokenType(token) != tokenType) {
@@ -127,12 +142,12 @@ public class AuthService {
         }
     }
 
-    private void deleteAndCreateRefreshToken(CustomUserDetails userDetails, String refreshToken) {
+    private void deleteAndCreateRefreshToken(final CustomUserDetails userDetails, final String refreshToken) {
         refreshTokenRepository.deleteById(userDetails.getUserId());
         saveAuthToken(userDetails.getUserId(), refreshToken);
     }
 
-    private void saveAuthToken(Long userId, String refreshToken) {
+    private void saveAuthToken(final Long userId, final String refreshToken) {
         refreshTokenRepository.save(new RefreshToken(userId, refreshToken, refreshExpirationTime));
     }
 }

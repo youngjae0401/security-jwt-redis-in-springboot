@@ -32,10 +32,10 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
-    public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter,
-                          CustomUserDetailsService userDetailsService,
-                          CustomAuthenticationEntryPoint authenticationEntryPoint,
-                          CustomAccessDeniedHandler accessDeniedHandler) {
+    public SecurityConfig(final JwtAuthorizationFilter jwtAuthorizationFilter,
+                          final CustomUserDetailsService userDetailsService,
+                          final CustomAuthenticationEntryPoint authenticationEntryPoint,
+                          final CustomAccessDeniedHandler accessDeniedHandler) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;

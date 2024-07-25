@@ -20,7 +20,7 @@ public class BlackList {
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long accessExpirationTime;
 
-    public BlackList(Long id, String accessToken, long accessExpirationTime) {
+    public BlackList(final Long id, final String accessToken, final long accessExpirationTime) {
         this.id = id;
         this.accessToken = accessToken;
         this.accessExpirationTime = accessExpirationTime;

@@ -55,8 +55,16 @@ public class User extends BaseTimeEntity {
                 .build();
     }
 
-    public void updateUser(UserRequest request) {
-        name = request.getName();
-        phoneNumber = request.getPhoneNumber();
+    public void updateName(final String name) {
+        this.name = name;
+    }
+
+    public void updatePhoneNumber(final String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateUser(final UserRequest request) {
+        updateName(request.getName());
+        updatePhoneNumber(request.getPhoneNumber());
     }
 }
