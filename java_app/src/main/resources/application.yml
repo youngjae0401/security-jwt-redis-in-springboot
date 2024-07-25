@@ -40,5 +40,5 @@ server:
 jwt:
   type: Bearer
   secret-key: a2c3935cb452b1221d13a4eac0d7588c1011cdc5efc36fe82fc5bb944053638d1403632cbb7527afa0e47efdda47555879ef31185eaac46160e3a979a9194919
-  access-expiration-milliseconds: 10800000 # 10800000
-  refresh-expiration-milliseconds: 604800000 # 604800000
+  access-expiration-milliseconds: 3600000 # 1hour
+  refresh-expiration-milliseconds: 604800000 # 7days
