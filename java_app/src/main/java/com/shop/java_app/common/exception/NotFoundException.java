@@ -1,15 +1,7 @@
 package com.shop.java_app.common.exception;
 
-public class NotFoundException extends BaseException {
+public class NotFoundException extends RuntimeException {
     public NotFoundException(ErrorCode errorCode) {
-        super(errorCode);
-    }
-
-    public NotFoundException(Throwable cause) {
-        super(cause);
-    }
-
-    public NotFoundException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(errorCode.getMessage());
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ExceptionAdvice {
     @ExceptionHandler(NotFoundException.class)
     public ResponseDto<?> handleNotFoundException(NotFoundException exception) {
         return ResponseDto.fail(HttpStatus.NOT_FOUND, exception.getMessage());
